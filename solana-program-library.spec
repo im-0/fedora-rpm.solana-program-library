@@ -1,5 +1,5 @@
-%global commit          aaca5353bc7bd273031f5792854902dbe22601e0
-%global checkout_date   20220613
+%global commit          88add9906db489109e1e92d596d19b8effc0203c
+%global checkout_date   20230922
 %global short_commit    %(c=%{commit}; echo ${c:0:7})
 %global snapshot        .%{checkout_date}git%{short_commit}
 
@@ -62,12 +62,32 @@ Summary:    CLI tool for Solana Token Lending Program
 CLI tool for Solana Token Lending Program (spl-token-lending).
 
 
+%package single-pool
+Summary:    CLI tool for Solana Single-Validator Stake Pool
+
+
+%description single-pool
+CLI tool for Solana Single-Validator Stake Pool (spl-single-pool).
+
+
+%package token-upgrade
+Summary:    CLI tool for Solana Token Upgrade
+
+
+%description token-upgrade
+CLI tool for Solana Token Upgrade (spl-token-upgrade).
+
+
 %prep
 %autosetup -p1 -b0 -n %{name}-%{commit}
 %autosetup -p1 -b1 -n %{name}-%{commit}
 
 mkdir .cargo
 cp %{SOURCE2} .cargo/
+
+# Fix Fedora's shebang mangling errors:
+#     *** ERROR: ./usr/src/debug/solana-testnet-1.10.0-1.fc35.x86_64/vendor/ascii/src/ascii_char.rs has shebang which doesn't start with '/' ([cfg_attr(rustfmt, rustfmt_skip)])
+find . -type f -name "*.rs" -exec chmod 0644 "{}" ";"
 
 
 %build
@@ -101,6 +121,17 @@ mv target/release/spl-* \
 %{_bindir}/spl-token-lending
 
 
+%files single-pool
+%{_bindir}/spl-single-pool
+
+
+%files token-upgrade
+%{_bindir}/spl-token-upgrade
+
+
 %changelog
+* Fri Sep 22 2023 Ivan Mironov <mironov.ivan@gmail.com> - 0-0.0.20230922git88add99
+- Bump version to current git
+
 * Mon Jun 13 2022 Ivan Mironov <mironov.ivan@gmail.com> - 0-0.0.20220613gitaaca535
 - Initial packaging
