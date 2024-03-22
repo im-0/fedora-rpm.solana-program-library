@@ -1,5 +1,5 @@
-%global commit          88add9906db489109e1e92d596d19b8effc0203c
-%global checkout_date   20230922
+%global commit          c38a1b5d6a1a6049b5844aef8e50e889e18918ed
+%global checkout_date   20240323
 %global short_commit    %(c=%{commit}; echo ${c:0:7})
 %global snapshot        .%{checkout_date}git%{short_commit}
 
@@ -16,6 +16,8 @@ Source0:    https://github.com/solana-labs/%{name}/archive/%{commit}/%{name}-%{c
 # Contains solana-program-library-$COMMIT/vendor/*.
 Source1:    %{name}-%{commit}.cargo-vendor.tar.xz
 Source2:    config.toml
+
+Patch0: fix-proc-macro-crate.patch
 
 ExclusiveArch:  %{rust_arches}
 
@@ -78,9 +80,19 @@ Summary:    CLI tool for Solana Token Upgrade
 CLI tool for Solana Token Upgrade (spl-token-upgrade).
 
 
+%package transfer-hook
+Summary:    CLI tool for Solana Transfer Hook program
+
+
+%description transfer-hook
+CLI tool for Solana Transfer Hook program (spl-transfer-hook).
+
+
 %prep
-%autosetup -p1 -b0 -n %{name}-%{commit}
-%autosetup -p1 -b1 -n %{name}-%{commit}
+%setup -q -D -T -b0 -n %{name}-%{commit}
+%setup -q -D -T -b1 -n %{name}-%{commit}
+
+%patch -P 0 -p1
 
 mkdir .cargo
 cp %{SOURCE2} .cargo/
@@ -129,7 +141,14 @@ mv target/release/spl-* \
 %{_bindir}/spl-token-upgrade
 
 
+%files transfer-hook
+%{_bindir}/spl-transfer-hook
+
+
 %changelog
+* Sat Mar 23 2024 Ivan Mironov <mironov.ivan@gmail.com> - 0-0.0.20240323gitc38a1b5
+- Bump version to current git
+
 * Fri Sep 22 2023 Ivan Mironov <mironov.ivan@gmail.com> - 0-0.0.20230922git88add99
 - Bump version to current git
 
