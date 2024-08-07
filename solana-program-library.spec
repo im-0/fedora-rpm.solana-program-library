@@ -1,5 +1,5 @@
-%global commit          c38a1b5d6a1a6049b5844aef8e50e889e18918ed
-%global checkout_date   20240323
+%global commit          5d7a637e97e7b18e741f1b2f1f91a8327097f637
+%global checkout_date   20240807
 %global short_commit    %(c=%{commit}; echo ${c:0:7})
 %global snapshot        .%{checkout_date}git%{short_commit}
 
@@ -17,12 +17,12 @@ Source0:    https://github.com/solana-labs/%{name}/archive/%{commit}/%{name}-%{c
 Source1:    %{name}-%{commit}.cargo-vendor.tar.xz
 Source2:    config.toml
 
-Patch0: fix-proc-macro-crate.patch
-
 ExclusiveArch:  %{rust_arches}
 
 BuildRequires:  rust-packaging
 BuildRequires:  openssl-devel
+BuildRequires:  protobuf-compiler
+BuildRequires:  protobuf-devel
 
 # libudev-devel
 BuildRequires:  systemd-devel
@@ -92,8 +92,6 @@ CLI tool for Solana Transfer Hook program (spl-transfer-hook).
 %setup -q -D -T -b0 -n %{name}-%{commit}
 %setup -q -D -T -b1 -n %{name}-%{commit}
 
-%patch -P 0 -p1
-
 mkdir .cargo
 cp %{SOURCE2} .cargo/
 
@@ -103,6 +101,8 @@ find . -type f -name "*.rs" -exec chmod 0644 "{}" ";"
 
 
 %build
+export PROTOC=/usr/bin/protoc
+export PROTOC_INCLUDE=/usr/include
 %{__cargo} build %{?_smp_mflags} -Z avoid-dev-deps --frozen --release
 
 
@@ -146,6 +146,9 @@ mv target/release/spl-* \
 
 
 %changelog
+* Wed Aug 7 2024 Ivan Mironov <mironov.ivan@gmail.com> - 0-0.0.20240807git5d7a637
+- Bump version to current git
+
 * Sat Mar 23 2024 Ivan Mironov <mironov.ivan@gmail.com> - 0-0.0.20240323gitc38a1b5
 - Bump version to current git
 
