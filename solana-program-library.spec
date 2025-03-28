@@ -1,5 +1,5 @@
-%global commit          edfa8c5ac57a2f41da5b1fdab239298b5fad68e9
-%global checkout_date   20240922
+%global commit          5afaf6f5c85700277a54584d85ef737fda0a8903
+%global checkout_date   20250108
 %global short_commit    %(c=%{commit}; echo ${c:0:7})
 %global snapshot        .%{checkout_date}git%{short_commit}
 
@@ -146,6 +146,9 @@ mv target/release/spl-* \
 
 
 %changelog
+* Fri Mar 28 2025 Ivan Mironov <mironov.ivan@gmail.com> - 0-0.0.20250108git5afaf6f
+- Bump version to latest git before split
+
 * Sun Sep 22 2024 Ivan Mironov <mironov.ivan@gmail.com> - 0-0.0.20240922gitedfa8c5
 - Bump version to current git
 
